@@ -2,6 +2,7 @@ package com.itheima.management;
 
 import javax.naming.Name;
 import java.util.ArrayList;
+import java.util.Random;
 import java.util.Scanner;
 
 public class Admin {
@@ -33,6 +34,17 @@ public class Admin {
     //登录
     public static void login(ArrayList<User> list){
         System.out.println("登录");
+        Scanner sc=new Scanner(System.in);
+        if(list.size()==0){
+            System.out.println("用户名未注册，请先注册");
+            System.exit(0);
+        }else {
+            //登录
+            System.out.println("请输入用户名：");
+            String name=sc.next();
+            System.out.println("请输入密码：");
+            String password=sc.next();
+        }
     }
 
     //注册
@@ -143,12 +155,6 @@ public class Admin {
         return false;
     }
 
-    //将整数转化为string类型。
-//    public static String toString(long intNumber){
-//        String str=Integer.toString(intNumber);
-//        return str;
-//    }
-
     //验证字符串的前num位是否都为数字
     public static boolean checkId(String id,int num){//18,17
         for (int i = 0; i <num; i++) {
@@ -166,5 +172,49 @@ public class Admin {
             return true;
         }
         return false;
+    }
+
+    //生成验证码
+    public static String captcha(){
+        //在数组中添加52个大小写字母
+        char[] arr=new char[52];
+        for (int i = 0; i < arr.length; i++) {
+            if (arr.length<26) {
+                arr[i]=(char) (97+i);
+            }else {
+                arr[i]=(char) (65+i-26);
+            }
+        }
+        //在数组中随机选取四个字母
+        Random r=new Random();
+        String str="";
+        for (int i = 0; i < 4; i++) {
+            int index = r.nextInt(arr.length);
+            str=str+arr[index];
+        }
+        //最后一位为数字
+        int number = r.nextInt(10);
+        str+=number;
+        //打乱数字位置
+        char[] arrString=str.toCharArray();
+        //随机位置坐标。
+        int ranNumber = r.nextInt(arrString.length);
+        char c;
+        c=arrString[arrString.length-1];
+        arrString[arrString.length-1]=arrString[ranNumber];
+        arrString[ranNumber]=c;
+        //将字符数组变回字符串
+        String strs=new String(arrString);
+
+        return strs;
+    }
+
+    //遍历集合与输入是否一致。
+    public static String checkLogin(ArrayList<User> list){
+        String str="";
+        for (int i = 0; i < list.size(); i++) {
+            str=list.get(i).getName();
+        }
+        return str;
     }
 }
