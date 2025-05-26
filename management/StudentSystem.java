@@ -5,7 +5,7 @@ import java.util.Scanner;
 
 public class StudentSystem {
     //一拖四结构。
-    public static void main(String[] args) {
+    public static void startSystem() {
         ArrayList<student> list=new ArrayList<>();
         loop:while (true) {
             System.out.println("----------欢迎来到黑马学生管理系统------------");

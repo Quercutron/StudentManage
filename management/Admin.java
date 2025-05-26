@@ -17,16 +17,20 @@ public class Admin {
                 case "1": login(list);break;
                 case "2": enroll(list);break;
                 case "3": forgetPassword(list);break;
+                case "4":{
+                    System.out.println("谢谢使用，再见。");
+                    System.exit(0);
+                }
                 default:
                     System.out.println("无此选项");
             }
 
             for (int i = 0; i < list.size(); i++) {
                 User user = list.get(i);
-                System.out.println(user.getName());
-                System.out.println(user.getPassword());
-                System.out.println(user.getId());
-                System.out.println(user.getPhoneNumber());
+                System.out.println("用户名为："+user.getName());
+                System.out.println("用户密码为："+user.getPassword());
+                System.out.println("用户身份证号为："+user.getId());
+                System.out.println("用户密码为："+user.getPhoneNumber());
             }
         }
     }
@@ -37,13 +41,45 @@ public class Admin {
         Scanner sc=new Scanner(System.in);
         if(list.size()==0){
             System.out.println("用户名未注册，请先注册");
-            System.exit(0);
-        }else {
-            //登录
+            return;
+        }//登录
+        loop:while (true) {
+            User adminUser=new User();
             System.out.println("请输入用户名：");
             String name=sc.next();
             System.out.println("请输入密码：");
             String password=sc.next();
+
+            adminUser.setName(name);
+            adminUser.setPassword(password);
+
+            //验证码
+            String captcha = null;
+            String captchUser= null;
+            while (true) {
+                captcha = captcha();
+                System.out.println("验证码："+captcha);
+                captchUser = sc.next();
+                if (captchUser.equalsIgnoreCase(captcha)){
+                    System.out.println("验证码正确！");
+                    break;
+                }else {
+                    System.out.println("验证码错误");
+                    continue;
+                }
+            }
+
+            for (int i = 0; i < list.size(); i++) {
+                if (list.get(i).getName().equals(adminUser.getName() )&& list.get(i).getPassword().equals(adminUser.getPassword())&& captchUser.equals(captcha)){
+                    System.out.println("登录成功！");
+                    StudentSystem ss=new StudentSystem();
+                    ss.startSystem();
+                    break ;
+                }else {
+                    System.out.println("用户名或密码错误,您还有"+(3-i-1)+"次机会。");
+                    System.exit(3);
+                }
+            }
         }
     }
 
@@ -122,12 +158,37 @@ public class Admin {
         }
 
         list.add(user);
-
+        System.out.println("注册成功！");
     }
 
     //忘记密码
     public static void forgetPassword(ArrayList<User> list){
         System.out.println("忘记密码");
+        Scanner sc=new Scanner(System.in);
+        System.out.println("请输入用户名：");
+        String name=sc.next();
+        if (checkName(list,name)<1){
+            System.out.println("用户名不存在");
+            return;
+        }
+
+        while (true) {
+            String id=sc.next();
+            System.out.println("请输入身份证号码：");
+            String phoneNumber= sc.next();
+            System.out.println("请输入手机号码：");
+            for (int i = 0; i < list.size(); i++) {
+                if (phoneNumber.equals(list.get(i).getPhoneNumber())&&id.equals(list.get(i).getId())){
+                    System.out.println("验证成功，请输入密码：");
+                    String newPassword=sc.next();
+                    list.get(i).setPassword(newPassword);
+                    System.out.println("密码修改成功");
+                    break;
+                }else {
+                    System.out.println("账号信息不匹配，修改失败。");
+                }
+            }
+        }
     }
 
     //检查用户名是否存在
@@ -179,7 +240,7 @@ public class Admin {
         //在数组中添加52个大小写字母
         char[] arr=new char[52];
         for (int i = 0; i < arr.length; i++) {
-            if (arr.length<26) {
+            if (i<26) {
                 arr[i]=(char) (97+i);
             }else {
                 arr[i]=(char) (65+i-26);
